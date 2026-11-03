@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --vip-bg: #09090b;
+    --vip-surface: #141417;
+    --vip-surface-card: #1c1c21;
+    --vip-border: #27272e;
+    --vip-red: #e11d48;
+    --vip-red-dark: #be123c;
+    --vip-red-glow: rgba(225, 29, 72, 0.35);
+  }
+
+  body {
+    font-family: 'Noto Sans Sinhala', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background-color: #09090b;
+    color: #f4f4f5;
+  }
+}
+
+/* VIP Red & Black wallpaper patterns */
+.vip-wallpaper-dark {
+  background-color: #0a0a0c;
+  background-image: 
+    radial-gradient(rgba(225, 29, 72, 0.08) 1px, transparent 1px),
+    radial-gradient(rgba(255, 255, 255, 0.03) 1px, #0a0a0c 1px);
+  background-size: 28px 28px;
+  background-position: 0 0, 14px 14px;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(225, 29, 72, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(225, 29, 72, 0.6);
+}
+
+/* Neon glow helper */
+.shadow-red-glow {
+  box-shadow: 0 0 20px -3px rgba(225, 29, 72, 0.45);
+}

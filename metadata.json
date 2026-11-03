@@ -1,0 +1,6 @@
+{
+  "name": "Zavi Chats - Realtime සිංහල Messaging App",
+  "description": "නවීන සහ පූර්ණ පහසුකම් සහිත සැබෑ Live සිංහල WhatsApp Chat, Live Calls, Realtime Hiru News සහ Live Zavi AI Voice සංවාද App එක.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
