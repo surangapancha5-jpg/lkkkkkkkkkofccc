@@ -1,54 +1,53 @@
 name: Build LK Online APK
 
 'on':
-workflow_dispatch:
-push:
-branches:
-- main
-
-permissions:
-contents: read
+  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build:
+    runs-on: ubuntu-latest
 
-steps:
-  - name: Checkout
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-  - name: Setup Java
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: '17'
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-  - name: Setup Node
-    uses: actions/setup-node@v4
-    with:
-      node-version: '22'
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-  - name: Install Dependencies
-    run: npm install
+      - name: Install Dependencies
+        run: npm install
 
-  - name: Build Web App
-    run: npm run build
+      - name: Install Capacitor CLI
+        run: npm install -D @capacitor/cli
 
-  - name: Check Android
-    run: |
-      if [ ! -f android/gradlew ]; then
-        echo "Android project not found"
-        exit 1
-      fi
+      - name: Build Web App
+        run: npm run build
 
-  - name: Build APK
-    working-directory: android
-    run: |
-      chmod +x gradlew
-      ./gradlew assembleDebug --no-daemon
+      - name: Add Android Platform
+        run: npx cap add android
 
-  - name: Upload APK
-    uses: actions/upload-artifact@v4
-    with:
-      name: LK-Online-APK
-      path: android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Sync Android
+        run: npx cap sync android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: LK-Online-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
