@@ -1,16 +1,19 @@
 name: LK Online APK Builder
 
-on: [push, workflow_dispatch]
+'on':
+push:
+branches: [main]
+workflow_dispatch:
 
 jobs:
-build:
+android-build:
 runs-on: ubuntu-latest
 
 steps:
-  - name: Checkout Repository
+  - name: Checkout
     uses: actions/checkout@v4
 
-  - name: Setup Node.js
+  - name: Setup Node
     uses: actions/setup-node@v4
     with:
       node-version: 22
@@ -24,13 +27,14 @@ steps:
   - name: Install Dependencies
     run: npm install --legacy-peer-deps
 
-  - name: Build Web App
+  - name: Build Web
     run: npm run build
 
+  - name: Install Capacitor
+    run: npm install @capacitor/cli@7 @capacitor/android@7 --legacy-peer-deps
+
   - name: Add Android
-    run: |
-      npm install @capacitor/cli@^7 @capacitor/android@^7 --legacy-peer-deps
-      npx cap add android
+    run: npx cap add android
 
   - name: Sync Android
     run: npx cap sync android
