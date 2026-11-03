@@ -1,6 +1,6 @@
 name: Build LK Online APK
 
-on:
+'on':
 workflow_dispatch:
 push:
 branches:
@@ -14,7 +14,7 @@ build:
 runs-on: ubuntu-latest
 
 steps:
-  - name: Checkout Repository
+  - name: Checkout
     uses: actions/checkout@v4
 
   - name: Setup Java
@@ -23,7 +23,7 @@ steps:
       distribution: temurin
       java-version: '17'
 
-  - name: Setup Node.js
+  - name: Setup Node
     uses: actions/setup-node@v4
     with:
       node-version: '22'
@@ -34,11 +34,10 @@ steps:
   - name: Build Web App
     run: npm run build
 
-  - name: Check Android Project
+  - name: Check Android
     run: |
       if [ ! -f android/gradlew ]; then
-        echo "Android project is missing!"
-        echo "This repository needs Android/Capacitor setup."
+        echo "Android project not found"
         exit 1
       fi
 
@@ -53,4 +52,3 @@ steps:
     with:
       name: LK-Online-APK
       path: android/app/build/outputs/apk/debug/app-debug.apk
-      if-no-files-found: error
