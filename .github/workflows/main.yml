@@ -1,0 +1,85 @@
+name: LK Online Android APK
+
+'on':
+workflow_dispatch:
+push:
+branches:
+- main
+
+permissions:
+contents: read
+
+jobs:
+build:
+name: Build LK Online APK
+runs-on: ubuntu-latest
+
+steps:
+  - name: Checkout Repository
+    uses: actions/checkout@v4
+
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: '22'
+
+  - name: Setup Java
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '21'
+
+  - name: Install Dependencies
+    run: npm install --legacy-peer-deps
+
+  - name: Build React Website
+    run: npm run build
+
+  - name: Configure Capacitor
+    env:
+      APP_URL: ${{ secrets.APP_URL }}
+    run: |
+      if [ -z "$APP_URL" ]; then
+        echo "APP_URL secret is required."
+        echo "Deploy the Express backend first."
+        exit 1
+      fi
+
+      node -e '
+      const fs = require("fs");
+      const url = process.env.APP_URL;
+      if (!url.startsWith("https://")) {
+        throw new Error("APP_URL must use HTTPS");
+      }
+      fs.writeFileSync(
+        "capacitor.config.json",
+        JSON.stringify({
+          appId: "com.lk.online",
+          appName: "LK Online",
+          webDir: "dist",
+          server: {
+            url: url,
+            cleartext: false
+          }
+        }, null, 2)
+      );
+      '
+
+  - name: Add Android Platform
+    run: npx cap add android
+
+  - name: Sync Android
+    run: npx cap sync android
+
+  - name: Build Android APK
+    run: |
+      cd android
+      chmod +x gradlew
+      ./gradlew assembleDebug --no-daemon
+
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: LK-Online-APK
+      path: android/app/build/outputs/apk/debug/app-debug.apk
+      if-no-files-found: error
