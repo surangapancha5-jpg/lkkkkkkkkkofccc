@@ -1,16 +1,10 @@
-name: Build LK Online APK
+name: LK Online APK Builder
 
-'on':
-workflow_dispatch:
-push:
-branches:
-- main
-
-permissions:
-contents: read
+on: [push, workflow_dispatch]
 
 jobs:
 build:
+name: Build Android APK
 runs-on: ubuntu-latest
 
 steps:
@@ -28,16 +22,16 @@ steps:
       distribution: temurin
       java-version: '21'
 
-  - name: Install Dependencies
+  - name: Install Packages
     run: npm install --legacy-peer-deps
 
-  - name: Build Web App
+  - name: Build Website
     run: npm run build
 
-  - name: Install Capacitor CLI
-    run: npm install -D @capacitor/cli --legacy-peer-deps
+  - name: Install Capacitor
+    run: npm install @capacitor/cli@^7 @capacitor/android@^7 --legacy-peer-deps
 
-  - name: Add Android Platform
+  - name: Add Android
     run: npx cap add android
 
   - name: Sync Android
