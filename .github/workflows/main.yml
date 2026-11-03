@@ -1,6 +1,6 @@
-name: Android APK Build
+name: Build Android APK
 
-on:
+'on':
 workflow_dispatch:
 push:
 branches:
@@ -14,23 +14,42 @@ steps:
   - name: Checkout Repository
     uses: actions/checkout@v4
 
-  - name: Setup JDK
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: '22'
+      cache: npm
+
+  - name: Setup Java
     uses: actions/setup-java@v4
     with:
       distribution: temurin
-      java-version: '17'
+      java-version: '21'
 
-  - name: Setup Gradle
-    uses: gradle/actions/setup-gradle@v4
+  - name: Install Dependencies
+    run: npm install
 
-  - name: Build Debug APK
+  - name: Build Web App
+    run: npm run build
+
+  - name: Setup Android Project
     run: |
+      if [ ! -d android ]; then
+        npx cap add android
+      fi
+
+  - name: Sync Capacitor
+    run: npx cap sync android
+
+  - name: Build APK
+    run: |
+      cd android
       chmod +x gradlew
       ./gradlew assembleDebug
 
   - name: Upload APK
     uses: actions/upload-artifact@v4
     with:
-      name: Android-APK
-      path: '**/build/outputs/apk/debug/*.apk'
+      name: LK-ONLINE-APK
+      path: android/app/build/outputs/apk/debug/*.apk
       if-no-files-found: error
